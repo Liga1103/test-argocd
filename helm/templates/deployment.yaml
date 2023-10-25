@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: app-deploy
+    labels:
+      app: app
+spec:
+    replicas: 3
+    selector:
+        matchLabels:
+            app: app
+    template:
+        metadata:
+            labels:
+                app: app
+        spec:
+            containers:
+                - name: app
+                  image: bota2903/test:latest
+                  ports:
+                    - containerPort: 8080
+                  env:
+		  - name : APP_VERSION
+		    value: 2.0
+                  readinessProbe:
+                    httpGet:
+                        path: /health
+                        port: 8080
+                    initialDelaySeconds: 10
+                    periodSeconds: 10
+                    successThreshold: 1
+                    failureThreshold: 3
+                  livenessProbe:
+                    httpGet:
+                        path: /health
+                        port: 8080
+                    initialDelaySeconds: 10 periodSeconds: 10 timeoutSeconds: 5 successThreshold: 1 failureThreshold: 3-
